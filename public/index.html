@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axon — Psychiatric Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--font:'Inter',-apple-system,sans-serif;--radius:11px;--radius-sm:7px}
+[data-theme="light"]{--font:'DM Sans',-apple-system,sans-serif}
+[data-theme="dark"]{--bg:#0C0F0C;--surface:#141A14;--surface-2:#1C231C;--surface-3:#232D23;--border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.04);--text:#EEF2EE;--text-2:rgba(238,242,238,0.55);--text-3:rgba(238,242,238,0.28);--accent:#6BAF7A;--accent-dim:rgba(107,175,122,0.13);--accent-glow:rgba(107,175,122,0.3);--green:#4ADE80;--red:#F87171;--amber:#FBBF24;--blue:#60A5FA;--purple:#A78BFA;--purple-dim:rgba(167,139,250,0.12);--topbar:rgba(12,15,12,0.88);--tk:#2A3A2A;--tv:#6BAF7A;--logo:#6BAF7A}
+[data-theme="light"]{--bg:#F2EFE9;--surface:#FAF8F4;--surface-2:#EDE9E2;--surface-3:#E4DFD6;--border:rgba(60,45,30,0.1);--border-2:rgba(60,45,30,0.06);--text:#1C1710;--text-2:rgba(28,23,16,0.58);--text-3:rgba(28,23,16,0.35);--accent:#5C6B3A;--accent-dim:rgba(92,107,58,0.1);--accent-glow:rgba(92,107,58,0.18);--green:#3A6B2A;--red:#A63222;--amber:#A06B1A;--blue:#2A4E8C;--purple:#6D4FC2;--purple-dim:rgba(109,79,194,0.1);--topbar:rgba(242,239,233,0.92);--tk:#D6D0C6;--tv:#5C6B3A;--logo:#5C6B3A}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+.topbar{width:100%;background:var(--topbar);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:30px;height:30px;background:var(--logo);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:16px;height:16px}
+.logo-name{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.4px}
+.logo-sub{font-size:10px;font-weight:500;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(107,175,122,.2);border-radius:99px;padding:2px 7px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.theme-label{font-size:11px;font-weight:500;color:var(--text-3)}
+.toggle-wrap{position:relative;width:42px;height:24px;cursor:pointer;flex-shrink:0}
+.toggle-wrap input{position:absolute;opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(--tk);border-radius:99px;transition:background .25s}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--tv);box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .25s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:center;font-size:10px}
+[data-theme="light"] .toggle-thumb{transform:translateX(18px)}
+main{width:100%;max-width:680px;padding:28px 16px 100px;display:flex;flex-direction:column;gap:16px}
+.hero{display:flex;flex-direction:column;gap:5px}
+.hero-tag{font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.1em;text-transform:uppercase}
+.hero h1{font-size:clamp(21px,5vw,26px);font-weight:700;letter-spacing:-.6px;line-height:1.2}
+.hero p{font-size:14px;color:var(--text-2);line-height:1.6;max-width:500px}
+.onboard-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;animation:fi .2s ease both}
+.onboard-overlay.hidden{display:none}
+.onboard-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:420px;display:flex;flex-direction:column;gap:18px}
+.onboard-logo{display:flex;align-items:center;gap:10px}
+.onboard-logo-mark{width:36px;height:36px;background:var(--logo);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.onboard-logo-mark svg{width:18px;height:18px}
+.onboard-title{font-size:19px;font-weight:700;letter-spacing:-.5px}
+.onboard-desc{font-size:13.5px;color:var(--text-2);line-height:1.65}
+.onboard-items{display:flex;flex-direction:column;gap:9px}
+.onboard-item{display:flex;align-items:flex-start;gap:12px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:9px;padding:12px 14px}
+.oi-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:1px}
+.oi-green{background:rgba(107,175,122,.15)}
+.oi-amber{background:rgba(251,191,36,.12)}
+.oi-red{background:rgba(248,113,113,.12)}
+.oi-text{font-size:13px;color:var(--text);line-height:1.55}
+.oi-text strong{font-weight:600}
+.onboard-btn{width:100%;background:var(--accent);color:white;border:none;border-radius:10px;padding:14px;font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.onboard-btn:hover{opacity:.88}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);z-index:500;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex;animation:fi .18s ease both}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:400px;animation:pi .22s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes pi{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+.modal h2{font-size:17px;font-weight:700;letter-spacing:-.4px;margin-bottom:6px}
+.modal>p{font-size:13px;color:var(--text-2);line-height:1.55;margin-bottom:18px}
+.modal-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.modal-step{display:flex;align-items:flex-start;gap:10px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;padding:11px 13px}
+.sn{width:20px;height:20px;border-radius:50%;background:var(--accent);color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.st{font-size:13px;color:var(--text);line-height:1.5}
+.st strong{font-weight:600}
+.modal-actions{display:flex;gap:8px}
+.mbp{flex:1;background:var(--accent);color:white;border:none;border-radius:8px;padding:11px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.mbp:hover{opacity:.88}
+.mbs{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-family:var(--font);font-size:14px;font-weight:500;color:var(--text-2);cursor:pointer}
+.mbs:hover{background:var(--surface-3)}
+.deident-banner{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.22);border-radius:var(--radius);padding:11px 16px;font-size:13px;font-weight:500;color:var(--red);display:none;align-items:center;gap:10px;line-height:1.5}
+.deident-banner.show{display:flex}
+.deident-banner button{margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;line-height:1;opacity:.7;flex-shrink:0}
+.deident-banner button:hover{opacity:1}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:background .25s,border-color .25s}
+.card-header{padding:10px 16px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;gap:8px}
+.card-label{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.09em;flex:1}
+.char-count{font-size:11px;color:var(--text-3);font-variant-numeric:tabular-nums}
+textarea{width:100%;background:transparent;border:none;outline:none;padding:13px 16px;font-family:var(--font);font-size:14px;color:var(--text);line-height:1.65;resize:none;min-height:180px;caret-color:var(--accent)}
+@media(max-width:480px){textarea{font-size:16px;min-height:140px}}
+textarea::placeholder{color:var(--text-3)}
+.demo-tag{font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-dim);border-radius:4px;padding:2px 7px;margin-left:6px}
+.progress-wrap{height:2px;background:var(--border);overflow:hidden;display:none}
+.progress-wrap.active{display:block}
+.progress-fill{height:100%;width:30%;background:linear-gradient(90deg,var(--accent),#9dd4a8);animation:run 1.4s ease-in-out infinite;border-radius:99px}
+@keyframes run{0%{transform:translateX(-200%)}100%{transform:translateX(500%)}}
+.template-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--border-2);flex-wrap:wrap}
+.template-label{font-size:12px;color:var(--text-3);flex:1;min-width:120px}
+.template-clear{font-size:11px;color:var(--red);background:none;border:none;cursor:pointer;padding:3px 6px;border-radius:4px;font-family:var(--font)}
+.template-clear:hover{background:rgba(248,113,113,.1)}
+.upload-btn{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 11px;font-family:var(--font);font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .15s,color .15s}
+.upload-btn:hover{background:var(--surface-3);color:var(--text)}
+#template-file{display:none}
+.action-buttons{display:flex;flex-direction:column;gap:10px}
+.btn-primary{width:100%;background:var(--accent);color:white;border:none;border-radius:var(--radius);padding:14px;font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;transition:opacity .15s,box-shadow .2s,transform .1s}
+.btn-primary:hover{opacity:.88;box-shadow:0 0 22px var(--accent-glow)}
+.btn-primary:active{transform:scale(.99);opacity:.75}
+.btn-primary:disabled{background:var(--surface-3);color:var(--text-3);box-shadow:none;cursor:not-allowed;transform:none}
+.btn-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-secondary{background:var(--surface-2);color:var(--text-2);border:1px solid var(--border);border-radius:var(--radius);padding:13px 14px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s,color .15s,border-color .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-secondary:hover{background:var(--surface-3);color:var(--text)}
+.btn-secondary:active{transform:scale(.99);opacity:.75}
+.btn-secondary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-amber{border-color:rgba(251,191,36,.2)}.btn-amber:hover{color:var(--amber);border-color:rgba(251,191,36,.4)}
+.btn-blue{border-color:rgba(96,165,250,.2)}.btn-blue:hover{color:var(--blue);border-color:rgba(96,165,250,.4)}
+.btn-purple{border-color:rgba(167,139,250,.2)}.btn-purple:hover{color:var(--purple);border-color:rgba(167,139,250,.4)}
+#output-section{display:none;flex-direction:column;gap:14px}
+#output-section.visible{display:flex;animation:up .4s cubic-bezier(.22,1,.36,1) both}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.tab-bar{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;flex-wrap:wrap}
+.tab-btn{flex:1;min-width:70px;background:transparent;border:none;border-radius:8px;padding:8px 8px;font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-3);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+.tab-btn:hover{color:var(--text-2)}
+.tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tab-btn.active.green{color:var(--accent)}.tab-btn.active.amber{color:var(--amber)}.tab-btn.active.blue{color:var(--blue)}.tab-btn.active.purple{color:var(--purple)}
+.output-panel{display:none;flex-direction:column;gap:12px}
+.output-panel.active{display:flex;animation:up .3s cubic-bezier(.22,1,.36,1) both}
+.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.status{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500}
+.status.green{color:var(--green)}.status.amber{color:var(--amber)}.status.blue{color:var(--blue)}.status.purple{color:var(--purple)}
+.status-dot{width:7px;height:7px;border-radius:50%;animation:glow 2.2s ease-in-out infinite}
+.green .status-dot{background:var(--green);box-shadow:0 0 6px var(--green)}
+.amber .status-dot{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.blue .status-dot{background:var(--blue);box-shadow:0 0 6px var(--blue)}
+.purple .status-dot{background:var(--purple);box-shadow:0 0 6px var(--purple)}
+@keyframes glow{0%,100%{opacity:1}50%{opacity:.3}}
+.toolbar-right{display:flex;gap:6px;flex-wrap:wrap}
+.tool-btn{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-family:var(--font);font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .15s,color .15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.tool-btn:hover{background:var(--surface-3);color:var(--text)}
+.tool-btn:active{opacity:.6}
+.tool-btn.success{color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.08)}
+.tool-btn.hi{color:var(--accent);border-color:rgba(107,175,122,.3);background:var(--accent-dim)}
+.note-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;font-size:14px;line-height:1.82;color:var(--text-2);white-space:pre-wrap;transition:background .25s,border-color .25s;outline:none;caret-color:var(--accent)}
+.note-block:focus{border-color:var(--accent)}
+.note-block .sh{font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.07em;margin-top:20px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.note-block .sh:first-child{margin-top:0}
+.sh-copy{font-size:10px;font-weight:500;color:var(--accent);opacity:0;transition:opacity .15s;letter-spacing:.03em;text-transform:none;flex-shrink:0}
+.note-block .sh:hover .sh-copy{opacity:1}
+.note-block .section-body{display:block}
+.note-block hr{border:none;border-top:1px solid var(--border-2);margin:20px 0}
+abbr.at{text-decoration:none;border-bottom:1px dashed rgba(107,175,122,.55);cursor:help;color:inherit}
+.edit-hint{font-size:11px;color:var(--text-3);padding:4px 0 0}
+.pending-banner{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:var(--radius);padding:12px 16px;font-size:13px;font-weight:500;color:var(--amber);line-height:1.55}
+.error-wrap{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);border-radius:var(--radius);padding:16px;font-size:13.5px;color:var(--red);line-height:1.6}
+.timeline-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px}
+.timeline-card h3{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.chart-wrap{position:relative;height:200px}
+.timeline-events{display:flex;flex-direction:column;gap:8px}
+.event-item{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;font-size:13px}
+.event-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);margin-top:5px;flex-shrink:0}
+.event-date{font-weight:600;color:var(--text);min-width:90px;flex-shrink:0}
+.event-desc{color:var(--text-2);line-height:1.5}
+footer{text-align:center;font-size:11px;color:var(--text-3);padding:0 20px 32px;line-height:1.6}
+@media(max-width:480px){main{padding:20px 12px 80px;gap:14px}.hero h1{font-size:21px}.logo-sub{display:none}.tool-btn{padding:7px 9px;font-size:11px}.btn-row-2{grid-template-columns:1fr}}
+@media print{
+  @page{size:A4;margin:22mm 18mm}
+  body{background:white;color:black;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif}
+  .topbar,footer,.hero,#input-card,.action-buttons,.tab-bar,.toolbar,.modal-overlay,.progress-wrap,.pending-banner,.onboard-overlay,.edit-hint,.deident-banner{display:none!important}
+  main{max-width:100%;padding:0;gap:0}
+  #output-section{display:flex!important;flex-direction:column;gap:0;animation:none!important}
+  .output-panel{display:none!important}.output-panel.print-target{display:flex!important;flex-direction:column;gap:0}
+  .print-head{display:block!important;padding-bottom:12px;margin-bottom:18px;border-bottom:2.5px solid black}
+  .print-head h2{font-size:15pt;font-weight:700}.print-head p{font-size:9pt;color:#555;margin-top:3px}
+  .note-block{background:none;border:none;border-radius:0;padding:0;font-size:10.5pt;line-height:1.72;color:black}
+  .note-block .sh{font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:black;border-bottom:.5pt solid #CCC;padding-bottom:3pt;margin-top:14pt;margin-bottom:5pt}
+  .sh-copy{display:none}
+  abbr.at{border-bottom:none}
+  .timeline-card{border:none;padding:0;margin:0}
+  .chart-wrap{height:180pt}
+}
+.print-head{display:none}
+</style>
+</head>
+<body>
+
+<div class="onboard-overlay" id="onboard">
+  <div class="onboard-card">
+    <div class="onboard-logo">
+      <div class="onboard-logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="7.05" y2="16.95"/><line x1="16.95" y1="7.05" x2="19.78" y2="4.22"/></svg>
+      </div>
+      <span style="font-size:18px;font-weight:700;letter-spacing:-.4px">Axon</span>
+    </div>
+    <div>
+      <div class="onboard-title">Psychiatric documentation, faster.</div>
+      <div class="onboard-desc" style="margin-top:6px">Paste clerking text. Axon generates Maudsley-format admission notes, discharge summaries, referral letters, and clinical timelines using AI. A fictional demo patient is pre-loaded so you can try it immediately.</div>
+    </div>
+    <div class="onboard-items">
+      <div class="onboard-item">
+        <div class="oi-icon oi-green">&#x26A1;</div>
+        <div class="oi-text"><strong>Demo text pre-loaded.</strong> Hit Generate to see it in action. 3 free generations per day.</div>
+      </div>
+      <div class="onboard-item">
+        <div class="oi-icon oi-amber">&#x1F4C4;</div>
+        <div class="oi-text"><strong>Upload a template</strong> to match your unit's exact format, notation, and style.</div>
+      </div>
+      <div class="onboard-item">
+        <div class="oi-icon oi-red">&#x26A0;&#xFE0F;</div>
+        <div class="oi-text"><strong>Do not enter real patient data.</strong> This is a public demo. For clinical use, run Axon via your own Claude account at claude.ai.</div>
+      </div>
+    </div>
+    <button class="onboard-btn" onclick="dismissOnboard()">Got it &mdash; try the demo</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="pdf-modal">
+  <div class="modal">
+    <h2>Save as PDF</h2>
+    <p>Your browser's print dialog will open.</p>
+    <div class="modal-steps">
+      <div class="modal-step"><div class="sn">1</div><div class="st">Click <strong>Open Print Dialog</strong> below.</div></div>
+      <div class="modal-step"><div class="sn">2</div><div class="st">Set <strong>Destination</strong> to <strong>Save as PDF</strong>.</div></div>
+      <div class="modal-step"><div class="sn">3</div><div class="st">Click <strong>Save</strong>.</div></div>
+    </div>
+    <div class="modal-actions">
+      <button class="mbs" onclick="closeModal('pdf-modal')">Cancel</button>
+      <button class="mbp" onclick="doPrint()">Open Print Dialog &#x2192;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deident-modal">
+  <div class="modal">
+    <h2 style="color:var(--red)">&#x26A0;&#xFE0F; Real patient data detected</h2>
+    <p>Your text appears to contain real patient information. This is a public demo &mdash; do not enter identifying data. For clinical use, run Axon via your own Claude account at claude.ai where your data stays private.</p>
+    <div class="modal-actions">
+      <button class="mbs" onclick="closeModal('deident-modal')">Go back and edit</button>
+      <button class="mbp" style="background:var(--red)" onclick="proceedAnyway()" id="proceed-btn">Proceed anyway</button>
+    </div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="7.05" y2="16.95"/><line x1="16.95" y1="7.05" x2="19.78" y2="4.22"/></svg>
+    </div>
+    <span class="logo-name">Axon</span>
+    <span class="logo-sub">Psych Note</span>
+  </div>
+  <div class="topbar-right">
+    <span class="theme-label" id="tlabel">Dark</span>
+    <label class="toggle-wrap">
+      <input type="checkbox" id="ttog" onchange="setTheme(this.checked?'light':'dark')">
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb" id="tthumb">&#x1F332;</div>
+    </label>
+  </div>
+</div>
+
+<main>
+  <div class="hero">
+    <div class="hero-tag">Psychiatric Documentation</div>
+    <h1>Axon</h1>
+    <p>Paste clerking text. Generate admission notes, discharge summaries, referral letters, and clinical timelines.</p>
+  </div>
+
+  <div class="deident-banner" id="deident-banner">
+    &#x26A0;&#xFE0F; This is a public demo. Do not enter real patient data. For clinical use, run via your own Claude account.
+    <button onclick="document.getElementById('deident-banner').classList.remove('show')" title="Dismiss">&#x2715;</button>
+  </div>
+
+  <div class="card" id="input-card">
+    <div class="card-header">
+      <span class="card-label">Clerking / Interview Text <span class="demo-tag" id="demo-tag">Demo</span></span>
+      <span class="char-count" id="cc">0 chars</span>
+    </div>
+    <textarea id="input-text" rows="10"></textarea>
+    <div class="progress-wrap" id="pw"><div class="progress-fill"></div></div>
+    <div class="template-row">
+      <span class="template-label"><span id="template-status">No template loaded</span></span>
+      <button class="template-clear" id="template-clear" onclick="clearTemplate()" style="display:none">&#x2715; Remove</button>
+      <button class="upload-btn" onclick="document.getElementById('template-file').click()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload template
+      </button>
+      <input type="file" id="template-file" accept=".txt,.md,.pdf" onchange="loadTemplate(this)">
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn-primary" id="btn-admission" onclick="tryGen('admission')">Generate Admission Note</button>
+    <div class="btn-row-2">
+      <button class="btn-secondary btn-amber" id="btn-discharge" onclick="tryGen('discharge')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Draft Discharge
+      </button>
+      <button class="btn-secondary btn-blue" id="btn-referral" onclick="tryGen('referral')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+        Referral Letter
+      </button>
+    </div>
+    <button class="btn-secondary btn-purple" id="btn-timeline" onclick="tryGen('timeline')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Generate Clinical Timeline
+    </button>
+  </div>
+
+  <div id="output-section">
+    <div class="tab-bar" id="tab-bar" style="display:none">
+      <button class="tab-btn green" id="tab-admission" onclick="switchTab('admission')">Admission</button>
+      <button class="tab-btn amber" id="tab-discharge" onclick="switchTab('discharge')">Discharge</button>
+      <button class="tab-btn blue" id="tab-referral" onclick="switchTab('referral')">Referral</button>
+      <button class="tab-btn purple" id="tab-timeline" onclick="switchTab('timeline')">Timeline</button>
+    </div>
+
+    <div class="output-panel" id="panel-admission">
+      <div class="print-head"><h2>Psychiatric Admission Note</h2><p id="pd-admission"></p></div>
+      <div class="toolbar">
+        <div class="status green"><span class="status-dot"></span>Admission note ready</div>
+        <div class="toolbar-right">
+          <button class="tool-btn" id="cb-admission" onclick="copyPanel('admission')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy all
+          </button>
+          <button class="tool-btn hi" onclick="openPdfModal('admission')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Save PDF
+          </button>
+        </div>
+      </div>
+      <div class="note-block" id="note-admission" contenteditable="true" spellcheck="false"></div>
+      <div class="edit-hint">&#x270E; Tap any section heading to copy it. Note is editable.</div>
+    </div>
+
+    <div class="output-panel" id="panel-discharge">
+      <div class="print-head"><h2>Psychiatric Discharge Summary</h2><p id="pd-discharge"></p></div>
+      <div class="pending-banner">&#x26A0;&#xFE0F; Draft at admission. Complete all [PENDING] fields before finalising.</div>
+      <div class="toolbar">
+        <div class="status amber"><span class="status-dot"></span>Draft &mdash; update at discharge</div>
+        <div class="toolbar-right">
+          <button class="tool-btn" id="cb-discharge" onclick="copyPanel('discharge')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy all
+          </button>
+          <button class="tool-btn hi" onclick="openPdfModal('discharge')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Save PDF
+          </button>
+        </div>
+      </div>
+      <div class="note-block" id="note-discharge" contenteditable="true" spellcheck="false"></div>
+      <div class="edit-hint">&#x270E; Tap any section heading to copy it. Note is editable.</div>
+    </div>
+
+    <div class="output-panel" id="panel-referral">
+      <div class="print-head"><h2>Referral Letter</h2><p id="pd-referral"></p></div>
+      <div class="toolbar">
+        <div class="status blue"><span class="status-dot"></span>Referral letter ready</div>
+        <div class="toolbar-right">
+          <button class="tool-btn" id="cb-referral" onclick="copyPanel('referral')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy all
+          </button>
+          <button class="tool-btn hi" onclick="openPdfModal('referral')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Save PDF
+          </button>
+        </div>
+      </div>
+      <div class="note-block" id="note-referral" contenteditable="true" spellcheck="false"></div>
+      <div class="edit-hint">&#x270E; Tap any section heading to copy it. Note is editable.</div>
+    </div>
+
+    <div class="output-panel" id="panel-timeline">
+      <div class="print-head"><h2>Clinical Timeline</h2><p id="pd-timeline"></p></div>
+      <div class="toolbar">
+        <div class="status purple"><span class="status-dot"></span>Timeline ready</div>
+        <div class="toolbar-right">
+          <button class="tool-btn hi" onclick="openPdfModal('timeline')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Save PDF
+          </button>
+        </div>
+      </div>
+      <div id="timeline-charts"></div>
+      <div id="timeline-empty" class="error-wrap" style="display:none">No quantifiable or temporal data found in the clerking text.</div>
+    </div>
+  </div>
+</main>
+
+<footer>Public demo &nbsp;&middot;&nbsp; Do not enter real patient data &nbsp;&middot;&nbsp; Clinical drafting aid only &nbsp;&middot;&nbsp; Always review before clinical use</footer>
+
+<script>
+var printTarget = 'admission';
+var templateText = '';
+var pendingGenType = '';
+var isDemo = true;
+
+var DEMO_TEXT = [
+  'FICTIONAL DEMO PATIENT — FOR DEMONSTRATION ONLY',
+  '',
+  'Referred by: Dr. M. Petersen (MO, GSH Emergency)',
+  'Informants: Patient + mother (Mrs. N. Jacobs, reliable)',
+  '',
+  'DEMOGRAPHICS',
+  'Mr. T. Jacobs. 27yo. Male. Right-handed. Mixed ancestry. Christian. Single. Lives with mother and younger sister in Bellville. Unemployed (previously delivery driver). SA citizen.',
+  '',
+  'PRESENTING COMPLAINT',
+  '"The people at work poisoned me and now they are watching me through my phone."',
+  '',
+  'HISTORY OF PRESENTING COMPLAINT',
+  'Approximately 8 months prior to admission, mother noted gradual social withdrawal — stopped seeing friends, resigned from job citing vague fears about colleagues. 6 months ago began expressing belief that former colleagues had contaminated his food with chemicals causing weakness and confusion. Subsequently convinced his phone had been modified to surveil him — removed SIM card and wrapped phone in foil. 3 months ago began hearing a male voice commenting on his actions (running commentary), occasionally issuing commands. Denied acting on commands. 1 month ago stopped leaving the house. Brought to GSH by mother after found attempting to dismantle electricity meter, stating they are sending signals through the wiring. No precipitating life event identified. No recent travel or sick contacts.',
+  '',
+  'At GSH: medically cleared, UDS negative, CT brain unremarkable. Initiated on haloperidol 5mg nocte — developed marked rigidity and akathisia within 48hrs. Haloperidol ceased. Transferred to VBH for further management.',
+  '',
+  'PAST PSYCHIATRIC HISTORY',
+  'No prior psychiatric contact. No previous admissions. No known suicide attempts or DSH.',
+  '',
+  'PAST MEDICAL AND SURGICAL HISTORY',
+  'Nil known. No head injuries. No seizures.',
+  '',
+  'CURRENT MEDICATION AND ALLERGIES',
+  'Nil regular prior to admission. Haloperidol 5mg nocte ceased at GSH due to EPS. NKDA.',
+  '',
+  'SUBSTANCE USE HISTORY',
+  'Cannabis 2-3x/week from age 16 to 24, then ceased. Denies use past 3 years. Denies alcohol, methamphetamine, other substances. UDS at GSH negative.',
+  '',
+  'FAMILY HISTORY',
+  'Maternal uncle with unknown psychiatric illness, hospitalised once in 1990s. No family history of suicide or neurological illness.',
+  '',
+  'PERSONAL AND DEVELOPMENTAL HISTORY',
+  'Born and raised Bellville. Normal birth and development. No childhood trauma. Completed Grade 11. No learning difficulties. Worked as delivery driver 4 years. No significant relationships. No children.',
+  '',
+  'SOCIAL HISTORY',
+  'Lives with mother and 18yo sister. Family supportive. Financial support via mother. No legal issues.',
+  '',
+  'PREMORBID PERSONALITY',
+  'Described by mother as sociable, hardworking, occasionally anxious. No premorbid eccentricity or paranoid traits.',
+  '',
+  'FORENSIC HISTORY',
+  'Nil.',
+  '',
+  'PHYSICAL EXAMINATION',
+  'BP 118/74. HR 76. Temp 36.8. RR 14. O2 sat 99% RA. BMI 23.4. Weight 72kg.',
+  'Mild residual rigidity bilateral upper limbs. No akathisia at examination. No tremor. No focal neurological deficits.',
+  'CVS: NHS. No murmurs. Chest: Clear. Abdomen: SNT. No organomegaly.',
+  '',
+  'INVESTIGATIONS',
+  'Admission bloods (Day 1): Na 138 mmol/L. K 3.9. Urea 4.2. Creat 78 umol/L. Glucose 5.1. Hb 14.2 g/dL. WCC 7.8. Platelets 224. TFT normal. LFT normal. TPA non-reactive. HIV negative. UDS negative.',
+  'Week 2 bloods: Na 136. Creat 81. Hb 14.0. Fasting glucose 5.3. Weight 73.5kg.',
+  'ECG: Normal sinus rhythm. QTc 398ms.',
+  '',
+  'MENTAL STATE EXAMINATION',
+  'Appearance & Behaviour: Dishevelled, unshaven. Poor eye contact. Guarded and suspicious. No abnormal movements. No agitation.',
+  'Speech: Reduced rate and volume. Latency present.',
+  'Mood: Subjectively euthymic.',
+  'Affect: Restricted. Incongruent at times.',
+  'Thought Form: Loosening of associations on extended questioning.',
+  'Thought Content: Persecutory delusions — colleagues poisoned him, ongoing surveillance via electricity network. Systematised, held with conviction. Denied SI. Denied HI.',
+  'Perception: Auditory hallucinations — male voice, third person, running commentary. No visual or olfactory hallucinations.',
+  'Cognition: Alert and oriented x3. Attention impaired (serial 7s 3/5). Memory intact. Abstract reasoning concrete.',
+  'Insight: Absent.',
+  'Judgement: Impaired.',
+  '',
+  'RISK ASSESSMENT',
+  'Suicidality: Denied active SI, intent, or plan. No previous attempts. Low immediate risk.',
+  'DSH: Denied.',
+  'Harm to others: No HI. Behaviour at GSH reflects delusional motivation rather than directed aggression. Low-moderate risk.',
+  'Self-neglect: High — not eating regularly, not leaving house, poor hygiene prior to admission.',
+  'Vulnerability: High — impaired insight, delusional framework, social isolation.',
+  '',
+  'FORMULATION',
+  'Mr. Jacobs is a 27yo male presenting with 8-month insidious onset psychotic illness characterised by systematised persecutory delusions, third-person auditory hallucinations, and significant functional decline.',
+  'Predisposing: Possible family history (maternal uncle). Cannabis use during neurodevelopment (ages 16-24).',
+  'Precipitating: No clear precipitant. Insidious onset consistent with primary psychotic illness.',
+  'Perpetuating: Absent insight, social withdrawal, unemployment.',
+  'Protective: Supportive family, no current substance use, no forensic history, previously good functioning.',
+  '',
+  'DIFFERENTIAL DIAGNOSIS',
+  '1. Schizophrenia, first episode (ICD-11: 6A20) — most likely. Insidious onset, 8-month duration, negative UDS, systematised persecutory delusions, third-person running commentary, functional decline, no mood episode.',
+  '2. Schizoaffective disorder (ICD-11: 6A21) — less likely. No significant affective component identified; requires longitudinal observation.',
+  '3. Substance-induced psychotic disorder (ICD-11: 6C40.0) — unlikely. UDS negative, cannabis ceased 3 years prior, duration exceeds typical substance-induced course.',
+  '',
+  'MANAGEMENT PLAN',
+  'Immediate: Admit involuntarily (MHA Section 33). Initiate risperidone 1mg bd, uptitrate to 2mg bd after 72hrs if tolerated. Orphenadrine 50mg bd for 5 days given prior EPS. Monitor vitals and EPS daily.',
+  'Short-term: Titrate risperidone to 4-6mg/day. Psychoeducation for patient and family. OT assessment — ADL functioning and vocational rehabilitation. Psychology referral for CBTp once stabilised. Dietitian review given metabolic monitoring on risperidone.',
+  'Longer-term: Outpatient follow-up at community mental health clinic. Clozapine trial if inadequate response to two antipsychotics. Supported employment if stable.'
+].join('\n');
+
+var IDENTIFIERS_RE = [
+  /\b\d{13}\b/,
+  /\bfolder\s*[:#]?\s*\d{4,}/i,
+  /\b(0[6-8][0-9])\d{7}\b/,
+  /\b[A-Z][a-z]+\s+[A-Z][a-z]+\s+(hospital|clinic|ward)\b/i,
+  /\b(patient|pt|mr|mrs|ms|dr)\.?\s+[A-Z][a-z]{2,}\b/
+];
+
+function looksLikeRealData(text) {
+  if (text === DEMO_TEXT) return false;
+  if (text.indexOf('FICTIONAL DEMO PATIENT') !== -1) return false;
+  for (var i = 0; i < IDENTIFIERS_RE.length; i++) {
+    if (IDENTIFIERS_RE[i].test(text)) return true;
+  }
+  return false;
+}
+
+var AB = {
+  SNT:'Soft and non-tender',JACCOLD:'Jaundice, Anaemia, Clubbing, Cyanosis, Oedema, Lymphadenopathy, Dehydration',
+  NHS:'Normal heart sounds',MSE:'Mental State Examination',PMHx:'Past medical history',
+  FHx:'Family history',SHx:'Social history',MDD:'Major Depressive Disorder',
+  EPS:'Extrapyramidal side effects',PRN:'As required',BD:'Twice daily',
+  TDS:'Three times daily',OD:'Once daily',HTN:'Hypertension',DM:'Diabetes mellitus',
+  BMI:'Body mass index',ECG:'Electrocardiogram',FBC:'Full blood count',Hb:'Haemoglobin',
+  WCC:'White cell count',Na:'Sodium',Creat:'Creatinine',TFT:'Thyroid function tests',
+  LFT:'Liver function tests',UDS:'Urine drug screen',TPA:'Treponema pallidum antibody',
+  asuicidal:'No active suicidal ideation',SI:'Suicidal ideation',HI:'Homicidal ideation',
+  ASD:'Autism Spectrum Disorder',ADHD:'Attention Deficit Hyperactivity Disorder',
+  OCD:'Obsessive Compulsive Disorder',PTSD:'Post-Traumatic Stress Disorder',
+  GAD:'Generalised Anxiety Disorder',GSH:'Groote Schuur Hospital',VBH:'Valkenberg Hospital',
+  SSRI:'Selective serotonin reuptake inhibitor',SNRI:'Serotonin-norepinephrine reuptake inhibitor',
+  TCA:'Tricyclic antidepressant',nocte:'At night',bd:'Twice daily',tds:'Three times daily',
+  OT:'Occupational Therapy',MDT:'Multidisciplinary team',GP:'General Practitioner',
+  CBTp:'Cognitive Behavioural Therapy for psychosis',MHA:'Mental Health Act',
+  NKDA:'No known drug allergies',DSH:'Deliberate self-harm'
+};
+
+var STRICT = 'STRICT RULES:\n- Only include information explicitly present in the clerking text. Never infer, assume, or fabricate.\n- Absent information: write Not reported. No generic clinical padding.\n- Units always abbreviated: mg, mL, mmol/L, kg, %, nocte, bd, tds, od, PRN. Never spell out units.\n- No filler phrases. Every sentence must carry clinical information.\n- Terse SA academic psychiatric register throughout.\n';
+
+var JSON_REMINDER = '\n\nIMPORTANT: Respond with ONLY a valid JSON object. No preamble, no explanation, no markdown. Start with { and end with }.';
+
+var AP_DEFAULT = 'You are a senior psychiatrist at a South African academic hospital. Convert the clerking text into a Maudsley-style admission note.\n\nReturn a single JSON object with one key: note. Value is a single continuous string.\nSection headings ALL CAPS on their own lines. Use newline for line breaks, double newline between sections.\n\nSections: PATIENT DEMOGRAPHICS / PRESENTING COMPLAINT / HISTORY OF PRESENTING COMPLAINT / PAST PSYCHIATRIC HISTORY / PAST MEDICAL AND SURGICAL HISTORY / CURRENT MEDICATION AND ALLERGIES / SUBSTANCE USE HISTORY / FAMILY HISTORY / PERSONAL AND DEVELOPMENTAL HISTORY / SOCIAL HISTORY / PREMORBID PERSONALITY / FORENSIC HISTORY / PHYSICAL EXAMINATION / MENTAL STATE EXAMINATION / INVESTIGATIONS / RISK ASSESSMENT / FORMULATION / DIFFERENTIAL DIAGNOSIS (ICD-11) / MANAGEMENT PLAN\n\n' + STRICT + '\n- Prose paragraphs, no bullets. Expand abbreviations first use per section only.\n- MSE subheadings on separate lines: Appearance & Behaviour: / Speech: / Mood: / Affect: / Thought Form: / Thought Content: / Perception: / Cognition: / Insight: / Judgement:\n- Risk: suicidality, DSH, harm to others, neglect, vulnerability. Only from stated information.\n- Formulation: Predisposing / Precipitating / Perpetuating / Protective. Only from stated information.\n- Differential: ranked by likelihood, ICD-11 codes, one-line justification.\n- Management: Immediate / Short-term / Longer-term, biopsychosocial.\n\nClerking text:\n';
+
+var DP_DEFAULT = 'You are a senior psychiatrist at a South African academic hospital. Generate a DRAFT discharge summary. Incomplete fields: mark [PENDING].\n\nReturn a single JSON object with one key: note. Value is a single continuous string.\nSection headings ALL CAPS on their own lines. Use newline for line breaks, double newline between sections.\n\nSections: PATIENT DETAILS / DATES / ADMITTING TEAM / DIFFERENTIAL DIAGNOSIS / REASON FOR ADMISSION / HISTORY / BACKGROUND / PHYSICAL EXAMINATION / INVESTIGATIONS / INPATIENT COURSE / MENTAL STATE AT DISCHARGE / MEDICATION ON DISCHARGE / FOLLOW-UP / OUTSTANDING ISSUES\n\n' + STRICT + '\n- Use as above to avoid repetition.\n- DIFFERENTIAL: numbered with vs. e.g. 1. Schizophrenia first episode vs. 2. Schizoaffective disorder\n- HISTORY: chronological narrative, clinician reasoning woven in.\n- BACKGROUND: collateral source named inline.\n- INPATIENT COURSE: doses in mg, titrations, adverse effects, concrete behavioural response.\n- MSE AT DISCHARGE: single compressed line. Mark [PENDING] if unknown.\n- MEDICATION ON DISCHARGE: drug, dose, frequency. Mark [PENDING] if unknown.\n- FOLLOW-UP: clinician, clinic, timeframe. Mark [PENDING] if unknown.\n- OUTSTANDING ISSUES: patient preferences, future medication considerations with rationale.\n\nClerking text:\n';
+
+var RP_DEFAULT = 'You are a senior psychiatrist at a South African academic hospital. Identify clearly indicated referrals and write a concise letter for each.\n\nReturn a single JSON object with one key: note. Value is a single string. Separate letters with a line containing only three dashes.\n\nEach letter section headings ALL CAPS on own lines:\nTO / FROM / DATE / RE (initials and age only) / REASON FOR REFERRAL / CLINICAL BACKGROUND / SPECIFIC QUESTIONS AND REQUESTS / THANK YOU LINE\n\n' + STRICT + '\n- Initials and age only. No full names.\n- If no referrals clearly indicated: No referrals clearly indicated.\n\nClerking text:\n';
+
+var TIMELINE_PROMPT = [
+  'You are a senior psychiatrist. Extract all quantifiable and temporal clinical data from the following clerking text.',
+  '',
+  'Return ONLY a valid JSON object with this structure:',
+  '{"events":[{"date":"string e.g. 8 months ago / Day 1 / Week 2","description":"string"}],"series":[{"label":"string e.g. Sodium / Weight / Risperidone dose / Psychosis severity","unit":"string e.g. mmol/L / kg / mg / /10","points":[{"label":"time label","value":number}]}]}',
+  '',
+  'RULES:',
+  '- events: key clinical events with temporal anchors — admissions, transfers, medication changes, significant clinical changes',
+  '- series: any value mentioned across time, or any value with a clear before/after (dose titration, weight change)',
+  '- For mood or symptoms without numeric scale, infer 1-10 severity proxy (severe=8, moderate=5, mild=2, resolved=1)',
+  '- Include medication dose changes as their own series',
+  '- Use relative time labels if exact dates not given (Premorbid, Admission, Week 1, Week 2, Discharge)',
+  '- If nothing quantifiable exists, return {"events":[],"series":[]}',
+  '- No preamble. Start with { and end with }.',
+  '',
+  'Clerking text:'
+].join('\n');
+
+function buildPrompt(defaultPrompt, tmpl, clerkingText) {
+  if (!tmpl) return defaultPrompt + clerkingText + JSON_REMINDER;
+  return 'You are a senior psychiatrist at a South African academic hospital.\n\nThe user has uploaded an EXAMPLE NOTE that defines the EXACT output format. You must:\n- Use the same section headings in the same order\n- Use the same notation, abbreviations, and shorthand\n- Match the sentence density and level of detail\n- Mirror how medications, doses, and findings are expressed\n\nEXAMPLE NOTE (defines required format, do not copy clinical content):\n---\n' + tmpl + '\n---\n\n' + STRICT + '\nReturn a single JSON object with one key: note. Value is a single continuous string.\nSection headings ALL CAPS on their own lines.\n\nClerking text:\n' + clerkingText + JSON_REMINDER;
+}
+
+function dismissOnboard() {
+  document.getElementById('onboard').classList.add('hidden');
+  try { localStorage.setItem('axon-onboard','1'); } catch(e) {}
+}
+(function(){
+  try { if (localStorage.getItem('axon-onboard')) document.getElementById('onboard').classList.add('hidden'); } catch(e) {}
+  var ta = document.getElementById('input-text');
+  ta.value = DEMO_TEXT;
+  document.getElementById('cc').textContent = DEMO_TEXT.length.toLocaleString() + ' chars';
+})();
+
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('tthumb').textContent = t==='dark' ? '\uD83C\uDF32' : '\u2600\uFE0F';
+  document.getElementById('tlabel').textContent = t==='dark' ? 'Dark' : 'Light';
+  document.getElementById('ttog').checked = t==='light';
+  try { localStorage.setItem('axon-theme',t); } catch(e) {}
+}
+(function(){
+  var s='dark'; try { s=localStorage.getItem('axon-theme')||'dark'; } catch(e) {}
+  setTheme(s);
+})();
+
+document.getElementById('input-text').addEventListener('input', function() {
+  document.getElementById('cc').textContent = this.value.length.toLocaleString() + ' chars';
+  var wasDemo = isDemo;
+  isDemo = (this.value === DEMO_TEXT || this.value.indexOf('FICTIONAL DEMO PATIENT') !== -1);
+  var tag = document.getElementById('demo-tag');
+  tag.style.display = isDemo ? '' : 'none';
+  if (!isDemo && wasDemo) {
+    document.getElementById('deident-banner').classList.add('show');
+  }
+});
+
+function tryGen(type) {
+  var txt = document.getElementById('input-text').value.trim();
+  if (!txt) { shake(); return; }
+  pendingGenType = type;
+  if (!isDemo && looksLikeRealData(txt)) {
+    document.getElementById('deident-modal').classList.add('open');
+  } else {
+    runGen(type, txt);
+  }
+}
+
+function proceedAnyway() {
+  closeModal('deident-modal');
+  runGen(pendingGenType, document.getElementById('input-text').value.trim());
+}
+
+function runGen(type, txt) {
+  if (type === 'timeline') { loadChartJS(function(){ runTimeline(txt); }); return; }
+  var bmap = {admission:'btn-admission',discharge:'btn-discharge',referral:'btn-referral'};
+  var dmap = {admission:AP_DEFAULT,discharge:DP_DEFAULT,referral:RP_DEFAULT};
+  var btn = document.getElementById(bmap[type]);
+  var orig = btn.innerHTML;
+  btn.disabled = true; btn.textContent = 'Generating...';
+  document.getElementById('pw').classList.add('active');
+  var prompt = buildPrompt(dmap[type], templateText, txt);
+  fetch('/api/proxy', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,messages:[{role:'user',content:prompt}]})
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.error) throw new Error(d.error.message || 'API error');
+    var raw = d.content.map(function(b){ return b.text||''; }).join('');
+    var clean = raw.replace(/^```json\s*/i,'').replace(/```\s*$/,'').trim();
+    var ji = clean.indexOf('{'); var je = clean.lastIndexOf('}');
+    if (ji >= 0 && je > ji) clean = clean.slice(ji, je+1);
+    var parsed = JSON.parse(clean);
+    renderDoc(type, parsed.note||'');
+  }).catch(function(e){ renderErr(type,e); })
+  .finally(function(){ btn.disabled=false; btn.innerHTML=orig; document.getElementById('pw').classList.remove('active'); });
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function ann(h) {
+  Object.keys(AB).forEach(function(a){
+    var exp=AB[a], s=a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    h=h.replace(new RegExp('(?<![a-zA-Z&;])'+s+'(?![a-zA-Z;])','g'),'<abbr class="at" title="'+exp+'">'+a+'</abbr>');
+  });
+  return h;
+}
+
+function fmt(text) {
+  var lines=text.split('\n'), html='', i=0;
+  while(i<lines.length){
+    var line=lines[i], t=line.trim();
+    if(t==='---'){html+='<hr>';i++;continue;}
+    var isH=/^[A-Z][A-Z\s\(\)\/\-\u2013\u2014:&]{2,}$/.test(t)&&t.length>3&&!/^[A-Z][a-z]/.test(t);
+    if(isH){
+      var bodyLines=[]; i++;
+      while(i<lines.length){
+        var nt=lines[i].trim();
+        var nH=/^[A-Z][A-Z\s\(\)\/\-\u2013\u2014:&]{2,}$/.test(nt)&&nt.length>3&&!/^[A-Z][a-z]/.test(nt);
+        if(nH||nt==='---') break;
+        bodyLines.push(lines[i]); i++;
+      }
+      var bodyHtml=bodyLines.map(function(l){ var lt=l.trim(); if(!lt) return '\n'; return ann(esc(l))+'\n'; }).join('');
+      html+='<span class="sh" onclick="copySection(this)" data-section="'+esc(t)+'"><span>'+esc(t)+'</span><span class="sh-copy">tap to copy</span></span><span class="section-body">'+bodyHtml+'</span>';
+    } else if(t===''){html+='\n';i++;}
+    else{html+=ann(esc(line))+'\n';i++;}
+  }
+  return html;
+}
+
+function copySection(el){
+  var heading=el.getAttribute('data-section');
+  var body=el.nextSibling;
+  var text=heading+'\n'+(body?body.textContent:'');
+  navigator.clipboard.writeText(text.trim()).then(function(){
+    var hint=el.querySelector('.sh-copy');
+    hint.textContent='copied!';
+    setTimeout(function(){ hint.textContent='tap to copy'; },1800);
+  });
+}
+
+function renderDoc(type,note){
+  var ds=new Date().toLocaleString('en-ZA',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('pd-'+type).textContent='Generated '+ds;
+  var el=document.getElementById('note-'+type);
+  el.innerHTML=fmt(note); el.dataset.raw=note;
+  document.getElementById('output-section').classList.add('visible');
+  document.getElementById('tab-bar').style.display='flex';
+  switchTab(type);
+  setTimeout(function(){ document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'}); },120);
+}
+
+function renderErr(type,err){
+  var el=document.getElementById('note-'+type);
+  el.innerHTML='<div class="error-wrap">'+esc(String(err))+'</div>';
+  document.getElementById('output-section').classList.add('visible');
+  document.getElementById('tab-bar').style.display='flex';
+  switchTab(type);
+}
+
+function switchTab(t){
+  ['admission','discharge','referral','timeline'].forEach(function(x){
+    var p=document.getElementById('panel-'+x), tb=document.getElementById('tab-'+x);
+    if(p) p.classList.remove('active'); if(tb) tb.classList.remove('active');
+  });
+  var panel=document.getElementById('panel-'+t), tabBtn=document.getElementById('tab-'+t);
+  if(panel) panel.classList.add('active'); if(tabBtn) tabBtn.classList.add('active');
+  printTarget=t;
+}
+
+function copyPanel(type){
+  var raw=document.getElementById('note-'+type).dataset.raw||'';
+  navigator.clipboard.writeText(raw).then(function(){
+    var b=document.getElementById('cb-'+type), o=b.innerHTML;
+    b.innerHTML='&#x2713; Copied'; b.classList.add('success');
+    setTimeout(function(){ b.innerHTML=o; b.classList.remove('success'); },2200);
+  });
+}
+
+function openPdfModal(t){ printTarget=t; document.getElementById('pdf-modal').classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function doPrint(){
+  closeModal('pdf-modal');
+  document.querySelectorAll('.output-panel').forEach(function(p){ p.classList.remove('print-target'); });
+  document.getElementById('panel-'+printTarget).classList.add('print-target');
+  var nm={admission:'Axon_Admission_Note',discharge:'Axon_Discharge_Summary',referral:'Axon_Referral_Letter',timeline:'Axon_Timeline'};
+  setTimeout(function(){
+    var p=document.title; document.title=nm[printTarget]+'_'+new Date().toISOString().slice(0,10);
+    window.print(); document.title=p;
+  },350);
+}
+
+document.getElementById('pdf-modal').addEventListener('click',function(e){ if(e.target===this) closeModal('pdf-modal'); });
+document.getElementById('deident-modal').addEventListener('click',function(e){ if(e.target===this) closeModal('deident-modal'); });
+document.getElementById('onboard').addEventListener('click',function(e){ if(e.target===this) dismissOnboard(); });
+
+var activeCharts=[];
+
+function loadChartJS(cb){
+  if(window.Chart){ cb(); return; }
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+  s.onload=cb; s.onerror=function(){ alert('Failed to load chart library'); };
+  document.head.appendChild(s);
+}
+
+function runTimeline(txt){
+  var prompt=TIMELINE_PROMPT+'\n'+txt+JSON_REMINDER;
+  document.getElementById('pw').classList.add('active');
+  fetch('/api/proxy',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]})
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.error) throw new Error(d.error.message||'API error');
+    var raw=d.content.map(function(b){ return b.text||''; }).join('');
+    var clean=raw.replace(/^```json\s*/i,'').replace(/```\s*$/,'').trim();
+    var ji=clean.indexOf('{'); var je=clean.lastIndexOf('}');
+    if(ji>=0&&je>ji) clean=clean.slice(ji,je+1);
+    renderTimeline(JSON.parse(clean));
+  }).catch(function(e){
+    document.getElementById('timeline-charts').innerHTML='<div class="error-wrap">'+esc(String(e))+'</div>';
+    document.getElementById('timeline-empty').style.display='none';
+    document.getElementById('output-section').classList.add('visible');
+    document.getElementById('tab-bar').style.display='flex';
+    switchTab('timeline');
+  }).finally(function(){ document.getElementById('pw').classList.remove('active'); });
+}
+
+function renderTimeline(data){
+  var container=document.getElementById('timeline-charts');
+  var empty=document.getElementById('timeline-empty');
+  container.innerHTML='';
+  activeCharts.forEach(function(c){ try{ c.destroy(); }catch(e){} }); activeCharts=[];
+  if((!data.events||!data.events.length)&&(!data.series||!data.series.length)){
+    empty.style.display='block'; container.style.display='none';
+  } else {
+    empty.style.display='none'; container.style.display='block';
+    var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    var gridColor=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)';
+    var tickColor=isDark?'rgba(238,242,238,0.4)':'rgba(28,23,16,0.45)';
+    var textColor=isDark?'#EEF2EE':'#1C1710';
+    var ac=isDark?'#A78BFA':'#6D4FC2';
+    var af=isDark?'rgba(167,139,250,0.08)':'rgba(109,79,194,0.06)';
+    if(data.series&&data.series.length){
+      data.series.forEach(function(s){
+        if(!s.points||!s.points.length) return;
+        var card=document.createElement('div'); card.className='timeline-card';
+        card.innerHTML='<h3>'+esc(s.label||'')+(s.unit?' ('+esc(s.unit)+')':'')+'</h3><div class="chart-wrap"><canvas></canvas></div>';
+        container.appendChild(card);
+        var chart=new Chart(card.querySelector('canvas'),{
+          type:'line',
+          data:{labels:s.points.map(function(p){ return p.label; }),datasets:[{
+            data:s.points.map(function(p){ return p.value; }),
+            borderColor:ac,backgroundColor:af,borderWidth:2,
+            pointBackgroundColor:ac,pointRadius:5,pointHoverRadius:7,tension:0.35,fill:true
+          }]},
+          options:{responsive:true,maintainAspectRatio:false,
+            plugins:{legend:{display:false},tooltip:{backgroundColor:isDark?'#1C231C':'#FAF8F4',titleColor:textColor,bodyColor:tickColor,borderColor:isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)',borderWidth:1,callbacks:{label:function(ctx){ return ctx.parsed.y+(s.unit?' '+s.unit:''); }}}},
+            scales:{x:{ticks:{color:tickColor,font:{size:11}},grid:{color:gridColor}},y:{ticks:{color:tickColor,font:{size:11}},grid:{color:gridColor},beginAtZero:false}}}
+        });
+        activeCharts.push(chart);
+      });
+    }
+    if(data.events&&data.events.length){
+      var card2=document.createElement('div'); card2.className='timeline-card';
+      card2.innerHTML='<h3>Clinical Events</h3><div class="timeline-events"></div>';
+      container.appendChild(card2);
+      var evC=card2.querySelector('.timeline-events');
+      data.events.forEach(function(ev){
+        var item=document.createElement('div'); item.className='event-item';
+        item.innerHTML='<div class="event-dot"></div><div class="event-date">'+esc(ev.date||'')+'</div><div class="event-desc">'+esc(ev.description||'')+'</div>';
+        evC.appendChild(item);
+      });
+    }
+  }
+  var ds=new Date().toLocaleString('en-ZA',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('pd-timeline').textContent='Generated '+ds;
+  document.getElementById('output-section').classList.add('visible');
+  document.getElementById('tab-bar').style.display='flex';
+  switchTab('timeline');
+  setTimeout(function(){ document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'}); },120);
+}
+
+function loadTemplate(input){
+  var file=input.files[0]; if(!file) return;
+  var isPDF=file.name.toLowerCase().endsWith('.pdf')||file.type==='application/pdf';
+  if(isPDF){
+    document.getElementById('template-status').textContent='Reading PDF...';
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var script=document.createElement('script');
+      script.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.onload=function(){
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        window.pdfjsLib.getDocument({data:new Uint8Array(e.target.result)}).promise.then(function(pdf){
+          var pp=[];
+          for(var i=1;i<=Math.min(pdf.numPages,10);i++) pp.push(pdf.getPage(i).then(function(pg){ return pg.getTextContent().then(function(c){ return c.items.map(function(s){ return s.str; }).join(' '); }); }));
+          Promise.all(pp).then(function(pages){
+            var text=pages.join('\n').trim();
+            if(!text){ document.getElementById('template-status').textContent='PDF has no selectable text - try .txt'; return; }
+            templateText=text.slice(0,4000);
+            document.getElementById('template-status').textContent='Template: '+file.name;
+            document.getElementById('template-clear').style.display='inline-block';
+          });
+        }).catch(function(){ document.getElementById('template-status').textContent='PDF read failed - try .txt'; });
+      };
+      script.onerror=function(){ document.getElementById('template-status').textContent='PDF library failed to load'; };
+      document.head.appendChild(script);
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    var r2=new FileReader();
+    r2.onload=function(e){
+      templateText=e.target.result.slice(0,4000);
+      document.getElementById('template-status').textContent='Template: '+file.name;
+      document.getElementById('template-clear').style.display='inline-block';
+    };
+    r2.readAsText(file);
+  }
+  input.value='';
+}
+
+function clearTemplate(){
+  templateText='';
+  document.getElementById('template-status').textContent='No template loaded';
+  document.getElementById('template-clear').style.display='none';
+}
+
+function shake(){
+  var t=document.getElementById('input-text');
+  t.style.animation='none'; t.offsetHeight; t.style.animation='shk .35s ease';
+  setTimeout(function(){ t.style.animation=''; },400);
+}
+var ss=document.createElement('style');
+ss.textContent='@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}';
+document.head.appendChild(ss);
+</script>
+</body>
+</html>
