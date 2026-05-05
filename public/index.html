@@ -169,8 +169,7 @@ footer{text-align:center;font-size:11px;color:var(--text-3);padding:0 20px 32px;
 <div class="modal-overlay" id="disclaimer-modal">
   <div class="modal-card">
     <div>
-      <h2>Before you continue</h2>
-      <br>
+      <h2>! Before you continue</h2>
       <p class="subtitle">Read and accept before continuing.</p>
     </div>
 
@@ -230,7 +229,7 @@ footer{text-align:center;font-size:11px;color:var(--text-3);padding:0 20px 32px;
 </div>
 
 <div class="disclaimer-bar">
-  <span>Public demo only &nbsp;&middot;&nbsp; Fictional patient transcript &nbsp;&middot;&nbsp; AI outputs may contain errors &nbsp;&middot;&nbsp; Not a medical device &nbsp;&middot;&nbsp; Do not enter real patient data</span>
+  <span>! Public demo only &nbsp;&middot;&nbsp; Fictional patient transcript &nbsp;&middot;&nbsp; AI outputs may contain errors &nbsp;&middot;&nbsp; Not a medical device &nbsp;&middot;&nbsp; Do not enter real patient data</span>
   <button onclick="document.getElementById('disclaimer-modal').classList.remove('hidden')">View full disclaimer</button>
 </div>
 
@@ -520,7 +519,7 @@ function runGen(type) {
   document.getElementById('pw').classList.add('active');
   fetch('/api/proxy', {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,messages:[{role:'user',content:buildPrompt(dmap[type],templateText)}]})
+    body: JSON.stringify({model:'claude-sonnet-4-5',max_tokens:8000,messages:[{role:'user',content:buildPrompt(dmap[type],templateText)}]})
   }).then(function(r){ return r.json(); })
   .then(function(d){
     if (d.error) throw new Error(d.error.message || 'API error');
@@ -646,7 +645,7 @@ function runTimeline(){
   document.getElementById('pw').classList.add('active');
   fetch('/api/proxy',{
     method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]})
+    body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:3000,messages:[{role:'user',content:prompt}]})
   }).then(function(r){ return r.json(); })
   .then(function(d){
     if(d.error) throw new Error(d.error.message||'API error');
