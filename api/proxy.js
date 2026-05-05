@@ -40,7 +40,7 @@ export default async function handler(req, res) {
   try { body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body; }
   catch { return res.status(400).json({ error: { message: 'Invalid request body.' } }); }
 
-  body.model = 'claude-sonnet-4-20250514';
+  body.model = 'claude-sonnet-4-5';
   body.max_tokens = Math.min(body.max_tokens || 8000, 8000);
 
   try {
