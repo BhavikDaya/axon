@@ -483,7 +483,7 @@ function buildPrompt(defaultPrompt, tmpl) {
 
 (function() {
   try {
-    if (!localStorage.getItem('axon-disclaimer')) {
+    if (!localStorage.getItem('axon-disclaimer-v2')) {
       document.getElementById('disclaimer-modal').classList.remove('hidden');
     } else {
       document.getElementById('disclaimer-modal').classList.add('hidden');
@@ -494,7 +494,7 @@ function buildPrompt(defaultPrompt, tmpl) {
 
 function acceptDisclaimer() {
   document.getElementById('disclaimer-modal').classList.add('hidden');
-  try { localStorage.setItem('axon-disclaimer','1'); } catch(e) {}
+  try { localStorage.setItem('axon-disclaimer-v2','1'); } catch(e) {}
 }
 
 function setTheme(t) {
