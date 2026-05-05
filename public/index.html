@@ -170,47 +170,26 @@ footer{text-align:center;font-size:11px;color:var(--text-3);padding:0 20px 32px;
   <div class="modal-card">
     <div>
       <h2>! Before you continue</h2>
-      <p class="subtitle">Please read and accept the following before using this tool.</p>
+      <p class="subtitle">Read and accept before continuing.</p>
     </div>
 
     <div class="disclaimer-section">
       <h3>AI Limitations</h3>
-      <div class="disclaimer-item">
-        <div class="di-icon"></div>
-        <div class="di-text"><strong>AI outputs may be inaccurate, incomplete, or fabricated.</strong> This tool uses a large language model that can and does make clinical errors. Every output must be reviewed and verified by a qualified clinician before any use.</div>
-      </div>
-      <div class="disclaimer-item">
-        <div class="di-icon"></div>
-        <div class="di-text"><strong>Not a medical device.</strong> Axon is not registered as a medical device and is not intended for diagnostic, treatment, or clinical decision-making purposes.</div>
-      </div>
-      <div class="disclaimer-item">
-        <div class="di-icon"></div>
-        <div class="di-text"><strong>Clinician responsibility.</strong> You remain fully professionally and legally responsible for any documentation bearing your name, regardless of how it was drafted.</div>
-      </div>
+      <div class="disclaimer-item"><div class="di-text"><strong>Outputs may be inaccurate or fabricated.</strong> Review every output before any use.</div></div>
+      <div class="disclaimer-item"><div class="di-text"><strong>Not a medical device.</strong> Not intended for diagnosis, treatment, or clinical decisions.</div></div>
+      <div class="disclaimer-item"><div class="di-text"><strong>Clinician responsibility.</strong> You remain professionally and legally responsible for any documentation bearing your name.</div></div>
     </div>
 
     <div class="disclaimer-section">
       <h3>Privacy &amp; Legal (South Africa)</h3>
-      <div class="disclaimer-item">
-        <div class="di-icon"></div>
-        <div class="di-text"><strong>This is a public demo. Do not enter real patient data.</strong> Health information constitutes special personal information under POPIA Section 26. Processing it on a public platform without lawful basis, a data processing agreement, and appropriate safeguards is unlawful.</div>
-      </div>
-      <div class="disclaimer-item">
-        <div class="di-icon"></div>
-        <div class="di-text"><strong>Data transits third-party servers.</strong> Input text is sent to Anthropic's API for processing and is subject to Anthropic's privacy policy. No data is stored by Axon, but Anthropic's infrastructure is not POPIA-certified for South African health data.</div>
-      </div>
-      <div class="disclaimer-item">
-        <div class="di-icon"></div>
-        <div class="di-text"><strong>HPCSA.</strong> Use of this tool for real patient documentation does not transfer your professional obligations. Patient confidentiality under HPCSA guidelines applies regardless of the tools used.</div>
-      </div>
-      <div class="disclaimer-item">
-        <div class="di-icon"></div>
-        <div class="di-text"><strong>Demo only.</strong> This deployment is a technology demonstration using a fictional patient transcript. For research into clinical AI documentation tools, contact the developer.</div>
-      </div>
+      <div class="disclaimer-item"><div class="di-text"><strong>Do not enter real patient data.</strong> Health information is special personal information under POPIA Section 26. Processing it here without lawful basis is unlawful.</div></div>
+      <div class="disclaimer-item"><div class="di-text"><strong>Data transits Anthropic's servers.</strong> Subject to Anthropic's privacy policy. Anthropic's infrastructure is not POPIA-certified for South African health data.</div></div>
+      <div class="disclaimer-item"><div class="di-text"><strong>HPCSA.</strong> Patient confidentiality obligations apply regardless of the tools used to draft documentation.</div></div>
+      <div class="disclaimer-item"><div class="di-text"><strong>Technology demonstration only.</strong> Uses a fictional patient transcript. Not for clinical use.</div></div>
     </div>
 
-    <button class="accept-btn" onclick="acceptDisclaimer()">I have read and understood this &mdash; proceed to demo</button>
-    <p class="accept-note">By proceeding you confirm you will not enter real patient data and accept sole responsibility for any content you generate.</p>
+    <button class="accept-btn" onclick="acceptDisclaimer()">I understand &mdash; proceed to demo</button>
+    <p class="accept-note">By proceeding you accept sole responsibility for any content you generate.</p>
   </div>
 </div>
 
